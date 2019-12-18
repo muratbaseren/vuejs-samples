@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="style.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="node_modules/faker/build/build/faker.js" type="text/javascript"></script>
+    <script src="node_modules/jquery/dist/jquery.min.js" type="text/javascript"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.js" type="text/javascript"></script>
+    <script>
+        faker.locale = "tr";
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 pt-4">
+                <div id="app">
+                    <user-list></user-list>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="componentsample-components.js"></script>
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+
+            },
+            created: function () {
+
+            },
+            methods: {
+
+            }
+        });
+    </script>
+</body>
+
+</html>

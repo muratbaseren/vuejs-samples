@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1.0, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="style.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="node_modules/faker/build/build/faker.js" type="text/javascript"></script>
+    <script src="node_modules/jquery/dist/jquery.min.js" type="text/javascript"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.js" type="text/javascript"></script>
+    <script>
+        faker.locale = "tr";
+    </script>
+</head>
+
+<body>
+    <div id="app" class="container mt-5">
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <button type="button" class="btn btn-primary" v-on:click="addingUser" data-toggle="modal"
+                    data-target="#addModal">
+                    <i class="fa fa-plus"></i> Add New User
+                </button>
+            </div>
+
+            <div class="col-md-12">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Surname</th>
+                            <th>E-Mail</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="user in users" v-show="!user.hide"
+                            v-bind:class="{'text-warning':user.modified, 'text-muted strike-through':user.deleted, 'text-success':user.added}">
+                            <td>
+                                <i class="text-warning fa fa-asterisk"
+                                    v-show="(user.added || user.modified) && !user.deleted"></i>
+                                <i class="text-danger fa fa-remove" v-show="user.deleted"></i>
+                            </td>
+                            <td>{{user.fname}}</td>
+                            <td>{{user.lname}}</td>
+                            <td>{{user.email}}</td>
+                            <td class="menu text-right">
+                                <button class="btn btn-info btn-sm" type="button" data-toggle="modal"
+                                    data-target="#editModal" v-on:click="editingUser(user)"
+                                    v-bind:disabled="user.deleted">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm" type="button" data-toggle="modal"
+                                    data-target="#deleteModal" v-on:click="deletingUser(user)"
+                                    v-bind:disabled="user.deleted">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                                <button class="btn btn-info btn-sm" type="button" v-on:click="recoveryUser(user)"
+                                    v-bind:disabled="!user.deleted" v-if="user.deleted">
+                                    <i class="fa fa-undo"></i>
+                                </button>
+                                <button class="btn btn-info btn-sm" type="button" v-bind:disabled="!user.modified"
+                                    v-if="user.modified && !user.deleted" v-on:click="revertUser(user)">
+                                    <i class="fa fa-refresh"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" class="text-right">
+                                <button class="btn btn-success" type="button" v-on:click="sendData">
+                                    <i class="fa fa-floppy-o mr-2"></i>Save Data
+                                </button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add New User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" class="form-control" placeholder="user first name"
+                                    v-model="addModel.fname">
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" class="form-control" placeholder="user last name"
+                                    v-model="addModel.lname">
+                            </div>
+                            <div class="form-group">
+                                <label>E-Mail</label>
+                                <input type="email" class="form-control" placeholder="user email address"
+                                    v-model="addModel.email">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" v-on:click="addUser" data-dismiss="modal">Add
+                            changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" class="form-control" placeholder="user first name"
+                                    v-model="editModel.fname">
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" class="form-control" placeholder="user last name"
+                                    v-model="editModel.lname">
+                            </div>
+                            <div class="form-group">
+                                <label>E-Mail</label>
+                                <input type="email" class="form-control" placeholder="user email address"
+                                    v-model="editModel.email">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" v-on:click="editUser" data-dismiss="modal">Save
+                            changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <h4>Are you sure want to delete item?</h4>
+                            <hr>
+                        </div>
+                        <div>
+                            <dl class="row">
+                                <dt class="col-md-3">First Name</dt>
+                                <dd class="col-md-9">{{delModel.fname}}</dd>
+                                <dt class="col-md-3">Last Name</dt>
+                                <dd class="col-md-9">{{delModel.lname}}</dd>
+                                <dt class="col-md-3">E-Mail</dt>
+                                <dd class="col-md-9">{{delModel.email}}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"
+                            v-on:click="deleteUser">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="table-script.js"></script>
+
+</body>
+
+</html>

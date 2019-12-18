@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1.0, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="style.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+
+
+    <div id="app" class="container">
+        <div class="row mt-3">
+            <div class="col-md-8 offset-2">
+                <my-h2 title='Todo App'></my-h2>
+            </div>
+
+            <div class="col-md-8 offset-2">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <my-h4 title='New Item'></my-h4>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <!-- <input type="text" class="form-control" placeholder="Enter new todo item text.."
+                                    v-model="newItemText" /> -->
+                                <my-input-text pholder="Enter new todo item text.." v-model="newItemText">
+                                </my-input-text>
+                            </div>
+                            <div class="form-group col-md-12 text-right">
+                                <button type="button" class="btn btn-primary" v-on:click="todoAdd(newItemText)">
+                                    <i class="fa fa-send"></i> add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8 offset-2">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <my-h4 title='Todo Items'></my-h4>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="toggle text-right col-md-12">
+                                <label class="checkbox">
+                                    <input type="checkbox" v-model="showCompleted" />
+                                    <span class="default"></span>
+                                </label>
+                                <span>Show completed !</span>
+                            </div>
+                            <div class="col-md-12">
+                                <ul class="list-group" v-for="todo in todos">
+                                    <transition name="slide-fade">
+                                        <li v-if="todo.completed == showCompleted || !todo.completed"
+                                            class="list-group-item m-1">
+                                            <div class="row">
+                                                <div class="col-md-1">
+                                                    <div class="ml-4">
+                                                        <label class="checkbox">
+                                                            <input type="checkbox" v-model="todo.completed" />
+                                                            <span class="default"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <span class="badge badge-info">{{todo.id}}</span>
+                                                    <span v-bind:data-id="todo.id"
+                                                        v-bind:class="{'strike-through':todo.completed}"
+                                                        v-bind:contenteditable="todo.isEditable">
+                                                        {{todo.text}}
+                                                    </span>
+                                                </div>
+                                                <div class="col-md-3 text-right">
+                                                    <button v-if="todo.isEditable == false" class="btn btn-info btn-sm"
+                                                        v-bind:disabled="todo.completed"
+                                                        v-on:click="todo.isEditable = true">
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                    <button v-else class="btn btn-success btn-sm"
+                                                        v-bind:disabled="todo.completed"
+                                                        v-on:click="todo.isEditable = false;todoEdited(todo);">
+                                                        <i class="fa fa-check"></i>
+                                                    </button>
+                                                    <button class="btn btn-danger btn-sm" v-on:click="todoRemove(todo)">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </transition>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        Vue.component('my-h4', {
+            props: ['css', 'title'],
+            template: '<div><h4 v-bind:class="css"> {{title}} </h4><hr></div>'
+        });
+
+        Vue.component('my-h2', {
+            props: ['css', 'title'],
+            template: '<div><h2 v-bind:class="css"> {{title}} </h2><hr></div>'
+        });
+
+        Vue.component('my-input-text', {
+            props: ['pholder', 'value'],
+            template: `
+                <input type="text" class="form-control" v-bind:placeholder="pholder" v-bind:value="value" v-on:input="$emit('input', $event.target.value)" />
+            `
+        });
+
+        Vue.component('alert-box', {
+            props: ['css', 'text'],
+            template: '<div v-bind:class="css">{{text}}<slot></slot></div>'
+        });
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                index: -1,
+                showCompleted: false,
+                newItemText: "",
+                todos: [
+                    { id: -1, text: 'item 1', completed: false, isEditable: false },
+                    { id: -1, text: 'item 2', completed: false, isEditable: false },
+                    { id: -1, text: 'item 3', completed: true, isEditable: false },
+                    { id: -1, text: 'item 4', completed: false, isEditable: false },
+                    { id: -1, text: 'item 5', completed: true, isEditable: false },
+                ]
+            },
+            created: function () {
+                for (var i = 0; i < this.todos.length; i++) {
+                    this.todos[i].id = i;
+                }
+
+                this.index = this.todos.length;
+            },
+            methods: {
+                todoAdd: function (text) {
+                    this.todos.push({ "id": this.index, "text": text, "completed": false, "isEditable": false });
+                    this.index++;
+                },
+                todoEdited: function (todo) {
+                    todo.text = document.querySelector("span[data-id='" + todo.id + "']").innerText;
+                },
+                todoRemove: function (todo) {
+                    if (confirm("Are you sure want to remove item?")) {
+                        this.todos.splice(this.todos.indexOf(todo), 1);
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
