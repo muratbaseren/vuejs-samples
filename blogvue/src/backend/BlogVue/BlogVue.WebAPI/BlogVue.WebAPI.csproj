@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MFramework.Services.Business" Version="1.0.0" />
+    <PackageReference Include="MFramework.Services.Business.Mongo" Version="1.0.0" />
+    <PackageReference Include="MFramework.Services.Common" Version="1.0.0" />
+    <PackageReference Include="MFramework.Services.DataAccess" Version="1.0.0" />
+    <PackageReference Include="MFramework.Services.DataAccess.Mongo" Version="1.0.1" />
+    <PackageReference Include="MFramework.Services.Entities" Version="1.0.1" />
+    <PackageReference Include="MFramework.Services.FakeData" Version="1.0.18" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.7" />
+    <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
+    <PackageReference Include="PasswordGenerator" Version="2.0.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.11.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="MailTemplate\MailTemplate.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="MailTemplate\NewUser.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="MailTemplate\NewUserEmailVerification.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+
+</Project>
