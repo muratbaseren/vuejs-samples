@@ -1,10 +1,24 @@
 <template>
   <div class="row">
     <div class="col-md-12">
-      <div class="albumList" :title="message" @click="myalert">
-        <div>{{ text }}</div>
-        <div>
-          <icon name="check-circle" scale="2" />
+      <h3>
+        Albums of ...
+      </h3>
+    </div>
+    <div class="col-md-12">
+      <div class="albumList">
+        <ul class="list-group" v-if="isExistsAlbums">
+          <li
+            class="list-group-item"
+            v-for="(album, aindex) in albums"
+            :key="aindex"
+          >
+            <span>{{ album.name }}</span>
+            <icon name="list"></icon>
+          </li>
+        </ul>
+        <div v-else>
+          Lütfen bir kişi seçiniz..
         </div>
       </div>
     </div>
@@ -15,32 +29,32 @@
 // to use vue-awesome should run npm install vue-awesome command.
 import "vue-awesome/icons";
 import Icon from "vue-awesome/components/Icon";
+// import axios from "axios";
 
 export default {
   name: "AlbumList",
-  props: ["message"],
+  props: ["datasource"],
   components: {
     icon: Icon
   },
   data() {
     return {
-      text: "AlbumList component"
+      albums: this.datasource
     };
   },
-  methods: {
-    myalert() {
-      alert(this.message);
+  computed: {
+    isExistsAlbums() {
+      return this.albums.length > 0;
     }
-  },
-  created() {
-    this.text += ", click me!";
   }
+  // methods: {
+  //   load(userid) {
+  //     axios
+  //       .get("https://jsonplaceholder.typicode.com/albums?userid=" + userid)
+  //       .then(res => (this.albums = res.data));
+  //   }
+  // }
 };
 </script>
 
-<style scoped>
-.albumList {
-  font-weight: bold;
-  color: #41b883;
-}
-</style>
+<style scoped></style>

@@ -1,42 +1,38 @@
 <template>
-  <div class="home" :title="message" @click="myalert">
-    <div>{{ text }}</div>
-    <div>
-      <icon name="check-circle" scale="2" />
+  <div class="home row">
+    <div class="col-md-6">
+      <user-list :datasource="users" :selected="selectedUser" />
+    </div>
+    <div class="col-md-6">
+      <album-list :datasource="albums" :user="selectedUser" />
     </div>
   </div>
 </template>
 
 <script>
-// to use vue-awesome should run npm install vue-awesome command.
-import "vue-awesome/icons";
-import Icon from "vue-awesome/components/Icon";
+import UserList from "./UserList";
+import AlbumList from "./AlbumList";
+import axios from "axios";
 
 export default {
   name: "Home",
-  props: ["message"],
   components: {
-    icon: Icon
+    "user-list": UserList,
+    "album-list": AlbumList
   },
   data() {
     return {
-      text: "Home component"
+      selectedUser: -1,
+      users: [],
+      albums: []
     };
   },
-  methods: {
-    myalert() {
-      alert(this.message);
-    }
-  },
-  created() {
-    this.text += ", click me!";
+  mounted() {
+    axios
+      .get("https://jsonplaceholder.typicode.com/users")
+      .then(res => (this.users = res.data));
   }
 };
 </script>
 
-<style scoped>
-.home {
-  font-weight: bold;
-  color: #41b883;
-}
-</style>
+<style scoped></style>
